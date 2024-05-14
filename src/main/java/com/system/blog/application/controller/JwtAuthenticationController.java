@@ -47,11 +47,6 @@ public class JwtAuthenticationController {
         return ResponseEntity.ok(new JwtResponse(token));
     }
 
-	// @PostMapping("/authenticate") 
-	// public JwtResponse authenticate(Authentication authentication) {
-	// 	return new JwtResponse(createToken(authentication));
-	// }
-
 	private String createToken(Authentication authentication) {
 		JwtClaimsSet jwtClaims = JwtClaimsSet.builder()
 								.issuer("self")
