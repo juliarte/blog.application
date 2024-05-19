@@ -1,5 +1,6 @@
 package com.system.blog.application.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,6 +58,10 @@ public class UserService {
 
         User followerUser = userRepository.findById(followerUserId)
                 .orElseThrow(() -> new EntityNotFoundException("Follower user not found with id: " + followerUserId));
+
+        if (user.getFollowings() == null) {
+            user.setFollowings(new ArrayList<>());
+        }
 
         user.getFollowings().add(followerUser);
         userRepository.save(user);
