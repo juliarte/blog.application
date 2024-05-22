@@ -1,5 +1,6 @@
 package com.system.blog.application.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -34,11 +35,20 @@ public class User {
     @JoinTable(name = "user_followings",
             joinColumns = @JoinColumn(name = "followings_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
-    //@JsonIgnore
-    private List<User> followings;
+    private List<User> followings = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<Post> posts;
+    private List<Post> posts = new ArrayList<>();
+
+    public void addPost(Post post) {
+        posts.add(post);
+        post.setUser(this);
+    }
+
+    public void removePost(Post post) {
+        posts.remove(post);
+        post.setUser(null);
+    }
     
 }

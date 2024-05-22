@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.system.blog.application.entity.Post;
 import com.system.blog.application.entity.User;
+import com.system.blog.application.exception.FailedToDeleteException;
 import com.system.blog.application.exception.FailedToUpdateException;
 import com.system.blog.application.exception.PostNotFoundException;
 import com.system.blog.application.jpa.PostRepository;
@@ -34,6 +35,8 @@ public class PostService {
         post.setUser(user);
         post.setContent(content);
         post.setCreatedAt(new Date());
+        
+        user.addPost(post);
         return postRepository.save(post);
     }
 
@@ -51,13 +54,8 @@ public class PostService {
     public List<Post> getFeedForUser(Long userId) { 
         User user = userService.findUserById(userId);
 
-        List<User> followingUsers = user.getFollowings();
-        followingUsers.add(user); // Include user's own posts in the feed
-
-        return followingUsers.stream()
-                .map(User::getPosts)
-                .flatMap(List::stream)
-                .sorted(Comparator.comparing(Post::getCreatedAt).reversed()) // Sort by publication date descending
+        return user.getPosts().stream()
+                .sorted(Comparator.comparing(Post::getCreatedAt).reversed())
                 .collect(Collectors.toList());
     }
 
@@ -66,6 +64,17 @@ public class PostService {
         if(post.isEmpty())
             throw new PostNotFoundException("Failed to find post with id: " + postId);
         return post.get();
+    }
+
+    public void removePostById(Long userId, Long postId) {
+        Post post = findPostById(postId);
+        if (!post.getUser().getId().equals(userId)) {
+            throw new FailedToDeleteException("Failed to delete post with id: " + postId);
+        }
+
+        User user = post.getUser();
+        user.removePost(post);
+        postRepository.delete(post);
     }
 
 }

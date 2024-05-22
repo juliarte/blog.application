@@ -14,13 +14,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.system.blog.application.entity.User;
 import com.system.blog.application.exception.UserNotFoundException;
 import com.system.blog.application.jpa.UserRepository;
 import com.system.blog.application.service.UserService;
-
-import jakarta.transaction.Transactional;
 
 @SpringBootTest
 @ActiveProfiles("test")
