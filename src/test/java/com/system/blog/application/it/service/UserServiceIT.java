@@ -1,4 +1,4 @@
-package com.system.blog.application.e2e.service;
+package com.system.blog.application.it.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
