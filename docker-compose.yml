@@ -1,21 +1,33 @@
-# version: '3.8'
+version: '3.8'
 
 # services:
 #   spring-boot-app:
 #     image: openjdk:21-jdk-slim
+#     volumes:
+#       - ./target/blog.application-0.0.1-SNAPSHOT.jar:/app/app.jar
 #     ports:
 #       - "8080:8080"
-#     volumes:
-#       - ./target/blog.application-0.0.1-SNAPSHOT.jar:/app/blog.application-0.0.1-SNAPSHOT.jar
-#     command: ["java", "-jar", "/app/blog.application-0.0.1-SNAPSHOT.jar"]
+#     command: ["java", "-jar", "/app/app.jar"]
 
-version: '3.8'
-
+#     version: '3.8'
 services:
-  spring-boot-app:
-    image: openjdk:21-jdk-slim
+  maven:
+    image: maven:3.9.6-amazoncorretto-21-al2023
     volumes:
-      - ./target/blog.application-0.0.1-SNAPSHOT.jar:/app/app.jar
+      - .:/usr/src/app
+    working_dir: /usr/src/app
+    command: mvn clean package
+
+  app:
+    image: openjdk:21-jdk-slim
+    depends_on:
+      - maven
+    volumes:
+      - ./target:/app/target
     ports:
       - "8080:8080"
-    command: ["java", "-jar", "/app/app.jar"]
+    command: ["sh", "-c", "java -jar /app/target/*.jar"]
+
+networks:
+  default:
+    driver: bridge
